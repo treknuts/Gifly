@@ -13,39 +13,13 @@ import {
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
   useColorScheme,
-  View,
+  Text,
   Image,
+  Dimensions,
 } from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
 
 const App: () => Node = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -76,18 +50,21 @@ const App: () => Node = () => {
 
   return (
     <SafeAreaView style={backgroundStyle}>
-      <Text>Check out these swag Gifs</Text>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        {!loading &&
-          gifs.map(gif => (
-            <Image
-              key={gif.id}
-              source={{uri: gif.images.downsized_large.url}}
-            />
-          ))}
+        {gifs.map(gif => (
+          <Image
+            key={gif.id}
+            style={{
+              height: 400,
+              width: Dimensions.get('window').width,
+            }}
+            source={{uri: gif.images.original.url}}
+          />
+          // <Text>{gif.title}</Text>
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
