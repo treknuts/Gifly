@@ -8,6 +8,7 @@
 
 import React, {useEffect, useState} from 'react';
 import type {Node} from 'react';
+import Clipboard from '@react-native-community/clipboard';
 import {
   SafeAreaView,
   ScrollView,
@@ -17,6 +18,8 @@ import {
   Text,
   Image,
   Dimensions,
+  TouchableOpacity,
+  Button,
 } from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
@@ -25,6 +28,7 @@ const App: () => Node = () => {
   const isDarkMode = useColorScheme() === 'dark';
   const [loading, setLoading] = useState(true);
   const [gifs, setGifs] = useState([]);
+  const [copiedText, setCopiedText] = useState('');
 
   const getGifs = async () => {
     try {
@@ -40,6 +44,15 @@ const App: () => Node = () => {
     }
   };
 
+  const copyToClipboard = url => {
+    Clipboard.setString(url);
+  };
+
+  const fetchCopiedText = async () => {
+    const text = await Clipboard.getString();
+    setCopiedText(text);
+  };
+
   useEffect(() => {
     getGifs();
   }, []);
@@ -51,19 +64,27 @@ const App: () => Node = () => {
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <Button title="Paste" onPress={fetchCopiedText} />
+      <Text style={{fontSize: 18, color: 'black'}}>{copiedText}</Text>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
         {gifs.map(gif => (
-          <Image
-            key={gif.id}
+          <TouchableOpacity
             style={{
-              height: 400,
-              width: Dimensions.get('window').width,
+              margin: 4,
             }}
-            source={{uri: gif.images.original.url}}
-          />
-          // <Text>{gif.title}</Text>
+            key={gif.id}
+            onPress={() => copyToClipboard(gif.images.original.url)}>
+            <Image
+              key={gif.id}
+              style={{
+                height: 400,
+                width: Dimensions.get('window').width - 8,
+              }}
+              source={{uri: gif.images.original.url}}
+            />
+          </TouchableOpacity>
         ))}
       </ScrollView>
     </SafeAreaView>
